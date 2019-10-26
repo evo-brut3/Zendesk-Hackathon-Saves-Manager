@@ -30,10 +30,10 @@
         {
             this.deleteprofile = new System.Windows.Forms.Button();
             this.deletegame = new System.Windows.Forms.Button();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.profileListView = new System.Windows.Forms.ListView();
             this.addgame = new System.Windows.Forms.Button();
             this.addprofile = new System.Windows.Forms.Button();
-            this.profile = new System.Windows.Forms.ListView();
+            this.gameListView = new System.Windows.Forms.ListView();
             this.SuspendLayout();
             // 
             // deleteprofile
@@ -56,15 +56,15 @@
             this.deletegame.Text = "Delete Game";
             this.deletegame.UseVisualStyleBackColor = true;
             // 
-            // listView1
+            // profileListView
             // 
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(440, 15);
-            this.listView1.Margin = new System.Windows.Forms.Padding(4);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(332, 457);
-            this.listView1.TabIndex = 10;
-            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.profileListView.HideSelection = false;
+            this.profileListView.Location = new System.Drawing.Point(440, 15);
+            this.profileListView.Margin = new System.Windows.Forms.Padding(4);
+            this.profileListView.Name = "profileListView";
+            this.profileListView.Size = new System.Drawing.Size(332, 457);
+            this.profileListView.TabIndex = 10;
+            this.profileListView.UseCompatibleStateImageBehavior = false;
             // 
             // addgame
             // 
@@ -87,16 +87,17 @@
             this.addprofile.Text = "Add Profile";
             this.addprofile.UseVisualStyleBackColor = true;
             // 
-            // profile
+            // gameListView
             // 
-            this.profile.HideSelection = false;
-            this.profile.Location = new System.Drawing.Point(16, 15);
-            this.profile.Margin = new System.Windows.Forms.Padding(4);
-            this.profile.Name = "profile";
-            this.profile.Size = new System.Drawing.Size(332, 457);
-            this.profile.TabIndex = 12;
-            this.profile.UseCompatibleStateImageBehavior = false;
-            this.profile.SelectedIndexChanged += new System.EventHandler(this.Profile_SelectedIndexChanged);
+            this.gameListView.HideSelection = false;
+            this.gameListView.Location = new System.Drawing.Point(16, 15);
+            this.gameListView.Margin = new System.Windows.Forms.Padding(4);
+            this.gameListView.Name = "gameListView";
+            this.gameListView.Size = new System.Drawing.Size(332, 457);
+            this.gameListView.TabIndex = 12;
+            this.gameListView.UseCompatibleStateImageBehavior = false;
+            this.gameListView.View = System.Windows.Forms.View.List;
+            this.gameListView.SelectedIndexChanged += new System.EventHandler(this.Profile_SelectedIndexChanged);
             // 
             // Form1
             // 
@@ -105,10 +106,10 @@
             this.ClientSize = new System.Drawing.Size(791, 577);
             this.Controls.Add(this.deleteprofile);
             this.Controls.Add(this.deletegame);
-            this.Controls.Add(this.listView1);
+            this.Controls.Add(this.profileListView);
             this.Controls.Add(this.addgame);
             this.Controls.Add(this.addprofile);
-            this.Controls.Add(this.profile);
+            this.Controls.Add(this.gameListView);
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -120,10 +121,10 @@
 
         private System.Windows.Forms.Button deleteprofile;
         private System.Windows.Forms.Button deletegame;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ListView profileListView;
         private System.Windows.Forms.Button addgame;
         private System.Windows.Forms.Button addprofile;
-        private System.Windows.Forms.ListView profile;
+        private System.Windows.Forms.ListView gameListView;
     }
 }
 
