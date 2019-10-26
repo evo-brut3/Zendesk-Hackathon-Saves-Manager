@@ -24,11 +24,10 @@ namespace Zendesk_Hackathon_Saves_Manager
 
         private void Init()
         {
-            string databaseLocation = "database.txt";
-            if (!File.Exists(databaseLocation))
-                File.Create("database.txt").Dispose();
+            if (!File.Exists(Globals.DATABASE_LOCATION))
+                File.Create(Globals.DATABASE_LOCATION).Dispose();
 
-            LoadDatabase(databaseLocation);
+            LoadDatabase(Globals.DATABASE_LOCATION);
             LoadIntoForm();
         }
 
@@ -47,25 +46,64 @@ namespace Zendesk_Hackathon_Saves_Manager
             }
         }
 
+        public static void SaveDatabase(string location)
+        {
+            if (!File.Exists(Globals.DATABASE_LOCATION))
+                File.Create(Globals.DATABASE_LOCATION).Dispose();
+
+            using (StreamWriter sw = File.CreateText(Globals.DATABASE_LOCATION))
+            {
+                foreach (Profile profile in ProfileManager.GetProfileList())
+                {
+                    sw.WriteLine(profile.game_id + "." + profile.profile_id + ";" + profile.game_name + ";" + profile.profile_name + ";" + profile.profile_location);
+                }
+            }
+        }
+
         private void LoadIntoForm()
         {
             List<Profile> profiles = ProfileManager.GetProfileList();
 
             foreach (var p in profiles)
             {
-                gameListView.Items.Add(p.game_name);
-                Debug.WriteLine(p.game_id);
-                Debug.WriteLine(p.profile_id);
-                Debug.WriteLine(p.game_name);
-                Debug.WriteLine(p.profile_name);
-                Debug.WriteLine(p.profile_location);
+                if (p.profile_id == 1)
+                    gameListView.Items.Add(p);
             }
         }
 
         private void Addgame_Click(object sender, EventArgs e)
         {
+            Form3 addGameForm = new Form3();
+            addGameForm.ShowDialog();
 
+            string[] nameAndLocation = addGameForm.GetNameAndLocation.Split(';');
+            List<Profile> profiles = ProfileManager.GetProfileList();
 
+            bool profileAlreadyExists = false;
+            foreach (Profile profile in profiles)
+            {
+                if (nameAndLocation[1] == profile.profile_location)
+                {
+                    profileAlreadyExists = true;
+                }
+            }
+
+            if (profileAlreadyExists == false)
+            {
+                if (profiles.Count == 0)
+                {
+                    Profile p = new Profile(1, 1, nameAndLocation[0], "Default", nameAndLocation[1] + "_1.1");
+
+                    ProfileManager.AddToProfileList(p);
+                }
+                else
+                {
+                    int lastGameID = profiles[profiles.Count - 1].game_id + 1;
+                    Profile p = new Profile(lastGameID, 1, nameAndLocation[0], "Default", nameAndLocation[1] + "_1.1");
+
+                    ProfileManager.AddToProfileList(p);
+                }
+            }
         }
         public class Profile
         {
@@ -83,6 +121,17 @@ namespace Zendesk_Hackathon_Saves_Manager
                 profile_name = pn;
                 profile_location = pl;
             }
+
+            public override string ToString()
+            {
+                return this.game_name;
+
+            }
+        }
+
+        static class Globals
+        {
+            public static string DATABASE_LOCATION = "database.txt";
         }
 
         static class ProfileManager
@@ -97,17 +146,87 @@ namespace Zendesk_Hackathon_Saves_Manager
             public static void AddToProfileList(Profile profile)
             {
                 ProfileList.Add(profile);
+                SaveDatabase(Globals.DATABASE_LOCATION);
             }
 
             public static void RemoveFromProfileList()
             {
 
             }
+
+            public static List<Profile> SearchForGameID(int gameID)
+            {
+                List<Profile> searchedProfiles = new List<Profile>();
+
+                foreach (var profile in ProfileList)
+                {
+                    if (profile.game_id == gameID)
+                    {
+                        searchedProfiles.Add(profile);
+                    }
+                }
+
+                return searchedProfiles;
+            }
         }
 
         private void Profile_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void GameListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (gameListView.SelectedItems.Count > 0)
+            {
+                profileListView.Items.Clear();
+
+                Profile selectedGame = gameListView.SelectedItem as Profile;
+                List<Profile> searchedProfiles = ProfileManager.SearchForGameID(selectedGame.game_id);
+
+                foreach(Profile profile in searchedProfiles)
+                {
+                    profileListView.Items.Add(profile.profile_name);
+                }
+                
+            }
+        }
+
+        private void Addprofile_Click(object sender, EventArgs e)
+        {
+            if (gameListView.SelectedItems.Count > 0)
+            {
+                Form4 addProfileForm = new Form4();
+                addProfileForm.ShowDialog();
+
+                int newGameID = 0;
+                int newProfileID = 0;
+                string newGameName = gameListView.SelectedItem.ToString();
+                string newProfileName = addProfileForm.GetProfileName;
+                string newProfileLocation = "";
+
+                newProfileName = addProfileForm.GetProfileName;
+                List<Profile> profiles = ProfileManager.GetProfileList();
+
+                foreach (Profile profile in profiles)
+                {
+                    if (profile.game_name == newGameName)
+                    {
+                        newGameID = profile.game_id;
+                        newProfileLocation = profile.profile_location.Remove(profile.profile_location.LastIndexOf("_")) + "_" + profile.game_id.ToString() + ".";
+                        break;
+                    }
+                }
+
+                List<Profile> profilesWithSpecificGameID = ProfileManager.SearchForGameID(newGameID);
+
+                newProfileID = profilesWithSpecificGameID[profilesWithSpecificGameID.Count-1].profile_id + 1;
+                newProfileLocation += newProfileID;
+
+                Profile p = new Profile(newGameID, newProfileID, newGameName, newProfileName, newProfileLocation);
+
+                ProfileManager.AddToProfileList(p);
+            }
         }
     }
 }

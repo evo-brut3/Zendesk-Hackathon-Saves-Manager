@@ -76,6 +76,7 @@
             this.addprofile.TabIndex = 8;
             this.addprofile.Text = "Add Profile";
             this.addprofile.UseVisualStyleBackColor = true;
+            this.addprofile.Click += new System.EventHandler(this.Addprofile_Click);
             // 
             // gameListView
             // 
@@ -85,6 +86,7 @@
             this.gameListView.Name = "gameListView";
             this.gameListView.Size = new System.Drawing.Size(332, 452);
             this.gameListView.TabIndex = 17;
+            this.gameListView.SelectedIndexChanged += new System.EventHandler(this.GameListView_SelectedIndexChanged);
             // 
             // profileListView
             // 
