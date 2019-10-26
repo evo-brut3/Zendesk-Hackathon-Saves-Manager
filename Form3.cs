@@ -53,5 +53,10 @@ namespace Zendesk_Hackathon_Saves_Manager
         {
             get { return (nameTextBox.Text + ";" + locationTextBox.Text); }
         }
+
+        private void OkButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

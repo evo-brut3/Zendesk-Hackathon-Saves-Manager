@@ -44,6 +44,8 @@ namespace Zendesk_Hackathon_Saves_Manager
 
                 ProfileManager.AddToProfileList(profile);
             }
+
+            SaveDatabase(Globals.DATABASE_LOCATION);
         }
 
         public static void SaveDatabase(string location)
@@ -51,11 +53,51 @@ namespace Zendesk_Hackathon_Saves_Manager
             if (!File.Exists(Globals.DATABASE_LOCATION))
                 File.Create(Globals.DATABASE_LOCATION).Dispose();
 
+            ProfileManager.SortDatabase();
+
             using (StreamWriter sw = File.CreateText(Globals.DATABASE_LOCATION))
             {
                 foreach (Profile profile in ProfileManager.GetProfileList())
                 {
                     sw.WriteLine(profile.game_id + "." + profile.profile_id + ";" + profile.game_name + ";" + profile.profile_name + ";" + profile.profile_location);
+                }
+            }
+        }
+
+        private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        {
+            // Get the subdirectories for the specified directory.
+            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException(
+                    "Source directory does not exist or could not be found: "
+                    + sourceDirName);
+            }
+
+            DirectoryInfo[] dirs = dir.GetDirectories();
+            // If the destination directory doesn't exist, create it.
+            if (!Directory.Exists(destDirName))
+            {
+                Directory.CreateDirectory(destDirName);
+            }
+
+            // Get the files in the directory and copy them to the new location.
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                string temppath = Path.Combine(destDirName, file.Name);
+                file.CopyTo(temppath, false);
+            }
+
+            // If copying subdirectories, copy them and their contents to new location.
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subdir in dirs)
+                {
+                    string temppath = Path.Combine(destDirName, subdir.Name);
+                    DirectoryCopy(subdir.FullName, temppath, copySubDirs);
                 }
             }
         }
@@ -82,7 +124,7 @@ namespace Zendesk_Hackathon_Saves_Manager
             bool profileAlreadyExists = false;
             foreach (Profile profile in profiles)
             {
-                if (nameAndLocation[1] == profile.profile_location)
+                if (nameAndLocation[1] == profile.profile_location.Remove(profile.profile_location.LastIndexOf("_")))
                 {
                     profileAlreadyExists = true;
                 }
@@ -95,13 +137,17 @@ namespace Zendesk_Hackathon_Saves_Manager
                     Profile p = new Profile(1, 1, nameAndLocation[0], "Default", nameAndLocation[1] + "_1.1");
 
                     ProfileManager.AddToProfileList(p);
+
+                    DirectoryCopy(nameAndLocation[1], nameAndLocation[1] + "_1.1", true);
                 }
                 else
                 {
                     int lastGameID = profiles[profiles.Count - 1].game_id + 1;
-                    Profile p = new Profile(lastGameID, 1, nameAndLocation[0], "Default", nameAndLocation[1] + "_1.1");
+                    Profile p = new Profile(lastGameID, 1, nameAndLocation[0], "Default", nameAndLocation[1] + "_" + lastGameID + ".1");
 
                     ProfileManager.AddToProfileList(p);
+
+                    DirectoryCopy(nameAndLocation[1], nameAndLocation[1] + "_" + lastGameID + ".1", true);
                 }
             }
         }
@@ -167,6 +213,11 @@ namespace Zendesk_Hackathon_Saves_Manager
                 }
 
                 return searchedProfiles;
+            }
+
+            public static void SortProfiles()
+            {
+
             }
         }
 
