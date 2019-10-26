@@ -29,20 +29,10 @@ namespace Zendesk_Hackathon_Saves_Manager
                 File.Create("database.txt").Dispose();
 
             LoadDatabase(databaseLocation);
-
-            List<Profile> profiles = ProfileManager.GetProfileList();
-
-            foreach (var p in profiles)
-            {
-                Debug.WriteLine(p.game_id);
-                Debug.WriteLine(p.profile_id);
-                Debug.WriteLine(p.game_name);
-                Debug.WriteLine(p.profile_name);
-                Debug.WriteLine(p.profile_location);
-            }
+            LoadIntoForm();
         }
 
-        public static void LoadDatabase(string location)
+        private static void LoadDatabase(string location)
         {
             string[] lines = File.ReadAllLines(location);
 
@@ -54,6 +44,21 @@ namespace Zendesk_Hackathon_Saves_Manager
                 Profile profile = new Profile(int.Parse(id[0]), int.Parse(id[1]), prof[1], prof[2], prof[3]);
 
                 ProfileManager.AddToProfileList(profile);
+            }
+        }
+
+        private void LoadIntoForm()
+        {
+            List<Profile> profiles = ProfileManager.GetProfileList();
+
+            foreach (var p in profiles)
+            {
+                gameListView.Items.Add(p.game_name);
+                Debug.WriteLine(p.game_id);
+                Debug.WriteLine(p.profile_id);
+                Debug.WriteLine(p.game_name);
+                Debug.WriteLine(p.profile_name);
+                Debug.WriteLine(p.profile_location);
             }
         }
 
@@ -98,6 +103,11 @@ namespace Zendesk_Hackathon_Saves_Manager
             {
 
             }
+        }
+
+        private void Profile_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

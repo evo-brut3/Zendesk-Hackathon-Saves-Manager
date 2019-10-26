@@ -39,7 +39,7 @@
             // deleteprofile
             // 
             this.deleteprofile.Location = new System.Drawing.Point(640, 495);
-            this.deleteprofile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.deleteprofile.Margin = new System.Windows.Forms.Padding(4);
             this.deleteprofile.Name = "deleteprofile";
             this.deleteprofile.Size = new System.Drawing.Size(133, 68);
             this.deleteprofile.TabIndex = 14;
@@ -49,7 +49,7 @@
             // deletegame
             // 
             this.deletegame.Location = new System.Drawing.Point(216, 495);
-            this.deletegame.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.deletegame.Margin = new System.Windows.Forms.Padding(4);
             this.deletegame.Name = "deletegame";
             this.deletegame.Size = new System.Drawing.Size(133, 68);
             this.deletegame.TabIndex = 13;
@@ -60,7 +60,7 @@
             // 
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(440, 15);
-            this.listView1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.listView1.Margin = new System.Windows.Forms.Padding(4);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(332, 457);
             this.listView1.TabIndex = 10;
@@ -69,7 +69,7 @@
             // addgame
             // 
             this.addgame.Location = new System.Drawing.Point(16, 495);
-            this.addgame.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.addgame.Margin = new System.Windows.Forms.Padding(4);
             this.addgame.Name = "addgame";
             this.addgame.Size = new System.Drawing.Size(133, 68);
             this.addgame.TabIndex = 9;
@@ -80,7 +80,7 @@
             // addprofile
             // 
             this.addprofile.Location = new System.Drawing.Point(440, 495);
-            this.addprofile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.addprofile.Margin = new System.Windows.Forms.Padding(4);
             this.addprofile.Name = "addprofile";
             this.addprofile.Size = new System.Drawing.Size(133, 68);
             this.addprofile.TabIndex = 8;
@@ -91,11 +91,12 @@
             // 
             this.profile.HideSelection = false;
             this.profile.Location = new System.Drawing.Point(16, 15);
-            this.profile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.profile.Margin = new System.Windows.Forms.Padding(4);
             this.profile.Name = "profile";
             this.profile.Size = new System.Drawing.Size(332, 457);
             this.profile.TabIndex = 12;
             this.profile.UseCompatibleStateImageBehavior = false;
+            this.profile.SelectedIndexChanged += new System.EventHandler(this.Profile_SelectedIndexChanged);
             // 
             // Form1
             // 
@@ -108,7 +109,7 @@
             this.Controls.Add(this.addgame);
             this.Controls.Add(this.addprofile);
             this.Controls.Add(this.profile);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);

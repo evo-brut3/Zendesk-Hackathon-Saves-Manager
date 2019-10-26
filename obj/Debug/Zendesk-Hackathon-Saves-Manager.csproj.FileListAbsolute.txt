@@ -12,7 +12,6 @@ D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\bin\Debug\Zendesk-Hackatho
 D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\bin\Debug\Zendesk-Hackathon-Saves-Manager.exe
 D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\bin\Debug\Zendesk-Hackathon-Saves-Manager.pdb
 D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\obj\Debug\Zendesk-Hackathon-Saves-Manager.csprojAssemblyReference.cache
-D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\obj\Debug\Zendesk_Hackathon_Saves_Manager.Profile.resources
 D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\obj\Debug\Zendesk_Hackathon_Saves_Manager.Form3.resources
 D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\obj\Debug\Zendesk_Hackathon_Saves_Manager.Form4.resources
 D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\obj\Debug\Zendesk_Hackathon_Saves_Manager.Form5.resources
@@ -22,3 +21,4 @@ D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\obj\Debug\Zendesk-Hackatho
 D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\obj\Debug\Zendesk-Hackathon-Saves-Manager.csproj.CoreCompileInputs.cache
 D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\obj\Debug\Zendesk-Hackathon-Saves-Manager.exe
 D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\obj\Debug\Zendesk-Hackathon-Saves-Manager.pdb
+D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\obj\Debug\Zendesk_Hackathon_Saves_Manager.Form1.resources
