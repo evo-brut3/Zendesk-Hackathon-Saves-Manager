@@ -21,3 +21,15 @@ D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\obj\Release\Zendesk-Hackat
 D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\obj\Release\Zendesk-Hackathon-Saves-Manager.csproj.CoreCompileInputs.cache
 D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\obj\Release\Zendesk-Hackathon-Saves-Manager.exe
 D:\Dokumenty\Projekty\Zendesk-Hackathon-Saves-Manager\obj\Release\Zendesk-Hackathon-Saves-Manager.pdb
+D:\hackaton_zendesk\Zendesk-Hackathon-Saves-Manager\bin\Release\Zendesk-Hackathon-Saves-Manager.exe.config
+D:\hackaton_zendesk\Zendesk-Hackathon-Saves-Manager\bin\Release\Zendesk-Hackathon-Saves-Manager.exe
+D:\hackaton_zendesk\Zendesk-Hackathon-Saves-Manager\bin\Release\Zendesk-Hackathon-Saves-Manager.pdb
+D:\hackaton_zendesk\Zendesk-Hackathon-Saves-Manager\obj\Release\Zendesk_Hackathon_Saves_Manager.Form1.resources
+D:\hackaton_zendesk\Zendesk-Hackathon-Saves-Manager\obj\Release\Zendesk_Hackathon_Saves_Manager.Form3.resources
+D:\hackaton_zendesk\Zendesk-Hackathon-Saves-Manager\obj\Release\Zendesk_Hackathon_Saves_Manager.Form4.resources
+D:\hackaton_zendesk\Zendesk-Hackathon-Saves-Manager\obj\Release\Zendesk_Hackathon_Saves_Manager.Form5.resources
+D:\hackaton_zendesk\Zendesk-Hackathon-Saves-Manager\obj\Release\Zendesk_Hackathon_Saves_Manager.Form6.resources
+D:\hackaton_zendesk\Zendesk-Hackathon-Saves-Manager\obj\Release\Zendesk_Hackathon_Saves_Manager.Properties.Resources.resources
+D:\hackaton_zendesk\Zendesk-Hackathon-Saves-Manager\obj\Release\Zendesk-Hackathon-Saves-Manager.csproj.GenerateResource.cache
+D:\hackaton_zendesk\Zendesk-Hackathon-Saves-Manager\obj\Release\Zendesk-Hackathon-Saves-Manager.exe
+D:\hackaton_zendesk\Zendesk-Hackathon-Saves-Manager\obj\Release\Zendesk-Hackathon-Saves-Manager.pdb
