@@ -218,7 +218,6 @@ namespace Zendesk_Hackathon_Saves_Manager
             public static void SortProfiles()
             {
                 ProfileList.Sort((x, y) => x.game_id.CompareTo(y.game_id));
-                //sm.Sort((x, y) => x.num_of_words.CompareTo(y.num_of_words));
             }
         }
 
@@ -278,6 +277,8 @@ namespace Zendesk_Hackathon_Saves_Manager
                 Profile p = new Profile(newGameID, newProfileID, newGameName, newProfileName, newProfileLocation);
 
                 ProfileManager.AddToProfileList(p);
+                var newProfLoc = newProfileLocation.Remove(newProfileLocation.LastIndexOf("_"));
+                DirectoryCopy(newProfLoc, newProfLoc + "_" + newGameID + "." + newProfileID, true);
             }
         }
     }
