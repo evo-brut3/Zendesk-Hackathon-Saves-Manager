@@ -53,7 +53,7 @@ namespace Zendesk_Hackathon_Saves_Manager
             if (!File.Exists(Globals.DATABASE_LOCATION))
                 File.Create(Globals.DATABASE_LOCATION).Dispose();
 
-            ProfileManager.SortDatabase();
+            ProfileManager.SortProfiles();
 
             using (StreamWriter sw = File.CreateText(Globals.DATABASE_LOCATION))
             {
@@ -182,7 +182,7 @@ namespace Zendesk_Hackathon_Saves_Manager
 
         static class ProfileManager
         {
-            public static List<Profile> ProfileList = new List<Profile>();
+            private static List<Profile> ProfileList = new List<Profile>();
 
             public static List<Profile> GetProfileList()
             {
@@ -217,7 +217,8 @@ namespace Zendesk_Hackathon_Saves_Manager
 
             public static void SortProfiles()
             {
-
+                ProfileList.Sort((x, y) => x.game_id.CompareTo(y.game_id));
+                //sm.Sort((x, y) => x.num_of_words.CompareTo(y.num_of_words));
             }
         }
 
