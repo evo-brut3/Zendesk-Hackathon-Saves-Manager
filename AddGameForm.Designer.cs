@@ -1,6 +1,6 @@
 ﻿namespace Zendesk_Hackathon_Saves_Manager
 {
-    partial class Form3
+    partial class AddGameForm
     {
         /// <summary>
         /// Required designer variable.

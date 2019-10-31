@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Zendesk_Hackathon_Saves_Manager
 {
-    public partial class Form4 : Form
+    public partial class AddProfileForm : Form
     {
-        public Form4()
+        public AddProfileForm()
         {
             InitializeComponent();
         }

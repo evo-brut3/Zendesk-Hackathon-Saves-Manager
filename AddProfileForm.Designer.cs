@@ -1,6 +1,6 @@
 ﻿namespace Zendesk_Hackathon_Saves_Manager
 {
-    partial class Form4
+    partial class AddProfileForm
     {
         /// <summary>
         /// Required designer variable.

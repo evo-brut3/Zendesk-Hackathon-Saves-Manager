@@ -14,9 +14,9 @@ namespace Zendesk_Hackathon_Saves_Manager
 {
 
 
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
             Init();
@@ -115,7 +115,7 @@ namespace Zendesk_Hackathon_Saves_Manager
 
         private void Addgame_Click(object sender, EventArgs e)
         {
-            Form3 addGameForm = new Form3();
+            AddGameForm addGameForm = new AddGameForm();
             addGameForm.ShowDialog();
 
             string[] nameAndLocation = addGameForm.GetNameAndLocation.Split(';');
@@ -247,7 +247,7 @@ namespace Zendesk_Hackathon_Saves_Manager
         {
             if (gameListView.SelectedItems.Count > 0)
             {
-                Form4 addProfileForm = new Form4();
+                AddProfileForm addProfileForm = new AddProfileForm();
                 addProfileForm.ShowDialog();
 
                 int newGameID = 0;

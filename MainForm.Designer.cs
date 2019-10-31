@@ -1,6 +1,6 @@
 ﻿namespace Zendesk_Hackathon_Saves_Manager
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Wymagana zmienna projektanta.

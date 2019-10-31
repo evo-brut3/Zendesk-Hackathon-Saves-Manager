@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Zendesk_Hackathon_Saves_Manager
 {
-    public partial class Form2 : Form
+    public partial class DeleteProfile : Form
     {
-        public Form2()
+        public DeleteProfile()
         {
             InitializeComponent();
         }

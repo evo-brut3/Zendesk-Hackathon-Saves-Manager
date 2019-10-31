@@ -13,9 +13,9 @@ using System.Numerics;
 
 namespace Zendesk_Hackathon_Saves_Manager
 {
-    public partial class Form3 : Form
+    public partial class AddGameForm : Form
     {
-        public Form3()
+        public AddGameForm()
         {
             InitializeComponent();
         }

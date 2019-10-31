@@ -1,6 +1,6 @@
 ﻿namespace Zendesk_Hackathon_Saves_Manager
 {
-    partial class Form6
+    partial class DeleteProfile
     {
         /// <summary>
         /// Required designer variable.
