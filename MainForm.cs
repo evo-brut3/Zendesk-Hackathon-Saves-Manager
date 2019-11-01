@@ -9,59 +9,25 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
+using System.Data.SqlClient;
 
 namespace Zendesk_Hackathon_Saves_Manager
 {
-
-
     public partial class MainForm : Form
     {
         public MainForm()
         {
             InitializeComponent();
-            Init();
+            InitializeApplication();
         }
 
-        private void Init()
+        private void InitializeApplication()
         {
             if (!File.Exists(Globals.DATABASE_LOCATION))
                 File.Create(Globals.DATABASE_LOCATION).Dispose();
 
-            LoadDatabase(Globals.DATABASE_LOCATION);
+            DatabaseManager.Connect();
             LoadIntoForm();
-        }
-
-        private static void LoadDatabase(string location)
-        {
-            string[] lines = File.ReadAllLines(location);
-
-            foreach (string line in lines)
-            {
-                string[] prof = line.Split(';');
-                string[] id = prof[0].Split('.');
-
-                Profile profile = new Profile(int.Parse(id[0]), int.Parse(id[1]), prof[1], prof[2], prof[3]);
-
-                ProfileManager.AddToProfileList(profile);
-            }
-
-            SaveDatabase(Globals.DATABASE_LOCATION);
-        }
-
-        public static void SaveDatabase(string location)
-        {
-            if (!File.Exists(Globals.DATABASE_LOCATION))
-                File.Create(Globals.DATABASE_LOCATION).Dispose();
-
-            ProfileManager.SortProfiles();
-
-            using (StreamWriter sw = File.CreateText(Globals.DATABASE_LOCATION))
-            {
-                foreach (Profile profile in ProfileManager.GetProfileList())
-                {
-                    sw.WriteLine(profile.game_id + "." + profile.profile_id + ";" + profile.game_name + ";" + profile.profile_name + ";" + profile.profile_location);
-                }
-            }
         }
 
         private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
@@ -104,68 +70,35 @@ namespace Zendesk_Hackathon_Saves_Manager
 
         private void LoadIntoForm()
         {
-            List<Profile> profiles = ProfileManager.GetProfileList();
+            SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader("Select GameID,GameName from Games");
 
-            foreach (var p in profiles)
+            while (sqlDataReader.Read())
             {
-                if (p.profile_id == 1)
-                    gameListView.Items.Add(p);
+                int gid = Int32.Parse(sqlDataReader.GetValue(0).ToString());
+                string gn = sqlDataReader.GetValue(1).ToString();
+                Game p = new Game(gid, gn);
+
+                gameListView.Items.Add(p);
             }
+
+            sqlDataReader.Close();
         }
 
         private void Addgame_Click(object sender, EventArgs e)
         {
             AddGameForm addGameForm = new AddGameForm();
             addGameForm.ShowDialog();
-
-            string[] nameAndLocation = addGameForm.GetNameAndLocation.Split(';');
-            List<Profile> profiles = ProfileManager.GetProfileList();
-
-            bool profileAlreadyExists = false;
-            foreach (Profile profile in profiles)
-            {
-                if (nameAndLocation[1] == profile.profile_location.Remove(profile.profile_location.LastIndexOf("_")))
-                {
-                    profileAlreadyExists = true;
-                }
-            }
-
-            if (profileAlreadyExists == false)
-            {
-                if (profiles.Count == 0)
-                {
-                    Profile p = new Profile(1, 1, nameAndLocation[0], "Default", nameAndLocation[1] + "_1.1");
-
-                    ProfileManager.AddToProfileList(p);
-
-                    DirectoryCopy(nameAndLocation[1], nameAndLocation[1] + "_1.1", true);
-                }
-                else
-                {
-                    int lastGameID = profiles[profiles.Count - 1].game_id + 1;
-                    Profile p = new Profile(lastGameID, 1, nameAndLocation[0], "Default", nameAndLocation[1] + "_" + lastGameID + ".1");
-
-                    ProfileManager.AddToProfileList(p);
-
-                    DirectoryCopy(nameAndLocation[1], nameAndLocation[1] + "_" + lastGameID + ".1", true);
-                }
-            }
         }
-        public class Profile
+
+        public class Game
         {
             public int game_id;
-            public int profile_id;
             public string game_name;
-            public string profile_name;
-            public string profile_location;
 
-            public Profile(int gid, int pid, string gn, string pn, string pl)
+            public Game(int gid, string gn)
             {
                 game_id = gid;
-                profile_id = pid;
                 game_name = gn;
-                profile_name = pn;
-                profile_location = pl;
             }
 
             public override string ToString()
@@ -180,47 +113,6 @@ namespace Zendesk_Hackathon_Saves_Manager
             public static string DATABASE_LOCATION = "database.txt";
         }
 
-        static class ProfileManager
-        {
-            private static List<Profile> ProfileList = new List<Profile>();
-
-            public static List<Profile> GetProfileList()
-            {
-                return ProfileList;
-            }
-
-            public static void AddToProfileList(Profile profile)
-            {
-                ProfileList.Add(profile);
-                SaveDatabase(Globals.DATABASE_LOCATION);
-            }
-
-            public static void RemoveFromProfileList()
-            {
-
-            }
-
-            public static List<Profile> SearchForGameID(int gameID)
-            {
-                List<Profile> searchedProfiles = new List<Profile>();
-
-                foreach (var profile in ProfileList)
-                {
-                    if (profile.game_id == gameID)
-                    {
-                        searchedProfiles.Add(profile);
-                    }
-                }
-
-                return searchedProfiles;
-            }
-
-            public static void SortProfiles()
-            {
-                ProfileList.Sort((x, y) => x.game_id.CompareTo(y.game_id));
-            }
-        }
-
         private void Profile_SelectedIndexChanged(object sender, EventArgs e)
         {
 
@@ -232,14 +124,15 @@ namespace Zendesk_Hackathon_Saves_Manager
             {
                 profileListView.Items.Clear();
 
-                Profile selectedGame = gameListView.SelectedItem as Profile;
-                List<Profile> searchedProfiles = ProfileManager.SearchForGameID(selectedGame.game_id);
+                Game selectedGame = gameListView.SelectedItem as Game;
+                SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader("Select ProfileID,ProfileName from Profiles where Game = " + selectedGame.game_id);
 
-                foreach(Profile profile in searchedProfiles)
+                while (sqlDataReader.Read())
                 {
-                    profileListView.Items.Add(profile.profile_name);
+                    profileListView.Items.Add(sqlDataReader.GetValue(1).ToString());
                 }
-                
+
+                sqlDataReader.Close();
             }
         }
 
@@ -247,39 +140,29 @@ namespace Zendesk_Hackathon_Saves_Manager
         {
             if (gameListView.SelectedItems.Count > 0)
             {
+                Game selectedGame = gameListView.SelectedItem as Game;
+
                 AddProfileForm addProfileForm = new AddProfileForm();
                 addProfileForm.ShowDialog();
 
-                int newGameID = 0;
-                int newProfileID = 0;
-                string newGameName = gameListView.SelectedItem.ToString();
-                string newProfileName = addProfileForm.GetProfileName;
-                string newProfileLocation = "";
+                string command = String.Format(
+                    "INSERT INTO Profiles (ProfileName, Game) VALUES (\'{0}\', {1})", 
+                    addProfileForm.GetProfileName, 
+                    selectedGame.game_id);
 
-                newProfileName = addProfileForm.GetProfileName;
-                List<Profile> profiles = ProfileManager.GetProfileList();
-
-                foreach (Profile profile in profiles)
-                {
-                    if (profile.game_name == newGameName)
-                    {
-                        newGameID = profile.game_id;
-                        newProfileLocation = profile.profile_location.Remove(profile.profile_location.LastIndexOf("_")) + "_" + profile.game_id.ToString() + ".";
-                        break;
-                    }
-                }
-
-                List<Profile> profilesWithSpecificGameID = ProfileManager.SearchForGameID(newGameID);
-
-                newProfileID = profilesWithSpecificGameID[profilesWithSpecificGameID.Count-1].profile_id + 1;
-                newProfileLocation += newProfileID;
-
-                Profile p = new Profile(newGameID, newProfileID, newGameName, newProfileName, newProfileLocation);
-
-                ProfileManager.AddToProfileList(p);
-                var newProfLoc = newProfileLocation.Remove(newProfileLocation.LastIndexOf("_"));
-                DirectoryCopy(newProfLoc, newProfLoc + "_" + newGameID + "." + newProfileID, true);
+                DatabaseManager.AddToDatabase(command);
+                //DirectoryCopy(newProfLoc, newProfLoc + "_" + newGameID + "." + newProfileID, true);
             }
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            DatabaseManager.Disconnect();
         }
     }
 }

@@ -39,7 +39,7 @@
             // deleteprofile
             // 
             this.deleteprofile.Location = new System.Drawing.Point(640, 495);
-            this.deleteprofile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.deleteprofile.Margin = new System.Windows.Forms.Padding(4);
             this.deleteprofile.Name = "deleteprofile";
             this.deleteprofile.Size = new System.Drawing.Size(133, 68);
             this.deleteprofile.TabIndex = 14;
@@ -49,7 +49,7 @@
             // deletegame
             // 
             this.deletegame.Location = new System.Drawing.Point(216, 495);
-            this.deletegame.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.deletegame.Margin = new System.Windows.Forms.Padding(4);
             this.deletegame.Name = "deletegame";
             this.deletegame.Size = new System.Drawing.Size(133, 68);
             this.deletegame.TabIndex = 13;
@@ -59,7 +59,7 @@
             // addgame
             // 
             this.addgame.Location = new System.Drawing.Point(16, 495);
-            this.addgame.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.addgame.Margin = new System.Windows.Forms.Padding(4);
             this.addgame.Name = "addgame";
             this.addgame.Size = new System.Drawing.Size(133, 68);
             this.addgame.TabIndex = 9;
@@ -70,7 +70,7 @@
             // addprofile
             // 
             this.addprofile.Location = new System.Drawing.Point(440, 495);
-            this.addprofile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.addprofile.Margin = new System.Windows.Forms.Padding(4);
             this.addprofile.Name = "addprofile";
             this.addprofile.Size = new System.Drawing.Size(133, 68);
             this.addprofile.TabIndex = 8;
@@ -97,7 +97,7 @@
             this.profileListView.Size = new System.Drawing.Size(332, 452);
             this.profileListView.TabIndex = 18;
             // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -108,9 +108,11 @@
             this.Controls.Add(this.deletegame);
             this.Controls.Add(this.addgame);
             this.Controls.Add(this.addprofile);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Name = "MainForm";
+            this.Text = "Saves Manager";
+            this.Load += new System.EventHandler(this.MainForm_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(MainForm_FormClosing);
             this.ResumeLayout(false);
 
         }
