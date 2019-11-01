@@ -34,7 +34,6 @@ namespace Zendesk_Hackathon_Saves_Manager
         public static void Disconnect()
         {
             sqlDataReader.Close();
-            sqlDataAdapter.Dispose();
             sqlCommand.Dispose();
             sqlConnection.Close();
         }
@@ -54,6 +53,7 @@ namespace Zendesk_Hackathon_Saves_Manager
 
             sqlDataAdapter.InsertCommand = new SqlCommand(command, sqlConnection);
             sqlDataAdapter.InsertCommand.ExecuteNonQuery();
+            sqlDataAdapter.Dispose();
         }
     }
 }

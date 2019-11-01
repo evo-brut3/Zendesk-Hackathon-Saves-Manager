@@ -49,9 +49,9 @@ namespace Zendesk_Hackathon_Saves_Manager
 
         }
 
-        public string GetNameAndLocation
+        public (string, string) GetNameAndLocation
         {
-            get { return (nameTextBox.Text + ";" + locationTextBox.Text); }
+            get { return (nameTextBox.Text, locationTextBox.Text); }
         }
 
         private void OkButton_Click(object sender, EventArgs e)

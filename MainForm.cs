@@ -88,6 +88,15 @@ namespace Zendesk_Hackathon_Saves_Manager
         {
             AddGameForm addGameForm = new AddGameForm();
             addGameForm.ShowDialog();
+
+            string command = String.Format(
+                "INSERT INTO Games (GameName, GameSaveLocation) VALUES (\'{0}\', \'{1}\')",
+                addGameForm.GetNameAndLocation.Item1,
+                addGameForm.GetNameAndLocation.Item2);
+
+            MessageBox.Show(command);
+
+            DatabaseManager.AddToDatabase(command);
         }
 
         public class Game
