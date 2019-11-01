@@ -55,5 +55,15 @@ namespace Zendesk_Hackathon_Saves_Manager
             sqlDataAdapter.InsertCommand.ExecuteNonQuery();
             sqlDataAdapter.Dispose();
         }
+
+        public static void DeleteFromDatabase(string command)
+        {
+            sqlDataAdapter = new SqlDataAdapter();
+            sqlCommand = new SqlCommand(command, sqlConnection);
+
+            sqlDataAdapter.DeleteCommand = new SqlCommand(command, sqlConnection);
+            sqlDataAdapter.DeleteCommand.ExecuteNonQuery();
+            sqlDataAdapter.Dispose();
+        }
     }
 }

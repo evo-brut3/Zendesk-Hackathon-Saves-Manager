@@ -70,7 +70,7 @@ namespace Zendesk_Hackathon_Saves_Manager
 
         private void LoadIntoForm()
         {
-            SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader("Select GameID,GameName from Games");
+            SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader("SELECT GameID,GameName FROM Games");
 
             while (sqlDataReader.Read())
             {
@@ -93,8 +93,6 @@ namespace Zendesk_Hackathon_Saves_Manager
                 "INSERT INTO Games (GameName, GameSaveLocation) VALUES (\'{0}\', \'{1}\')",
                 addGameForm.GetNameAndLocation.Item1,
                 addGameForm.GetNameAndLocation.Item2);
-
-            MessageBox.Show(command);
 
             DatabaseManager.AddToDatabase(command);
         }
@@ -134,7 +132,11 @@ namespace Zendesk_Hackathon_Saves_Manager
                 profileListView.Items.Clear();
 
                 Game selectedGame = gameListView.SelectedItem as Game;
-                SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader("Select ProfileID,ProfileName from Profiles where Game = " + selectedGame.game_id);
+                SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader(String.Format(
+                    @"SELECT ProfileID,ProfileName 
+                    FROM Profiles 
+                    WHERE Game = {0}",
+                    selectedGame.game_id));
 
                 while (sqlDataReader.Read())
                 {
@@ -172,6 +174,20 @@ namespace Zendesk_Hackathon_Saves_Manager
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             DatabaseManager.Disconnect();
+        }
+
+        private void Deletegame_Click(object sender, EventArgs e)
+        {
+            if (gameListView.SelectedItems.Count > 0)
+            {
+                Game selectedGame = gameListView.SelectedItem as Game;
+
+                string command = String.Format(
+                    "DELETE Games WHERE GameID={0}",
+                    selectedGame.game_id);
+
+                DatabaseManager.DeleteFromDatabase(command);
+            }
         }
     }
 }

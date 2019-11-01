@@ -55,6 +55,7 @@
             this.deletegame.TabIndex = 13;
             this.deletegame.Text = "Delete Game";
             this.deletegame.UseVisualStyleBackColor = true;
+            this.deletegame.Click += new System.EventHandler(this.Deletegame_Click);
             // 
             // addgame
             // 
@@ -111,8 +112,8 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainForm";
             this.Text = "Saves Manager";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(MainForm_FormClosing);
             this.ResumeLayout(false);
 
         }
