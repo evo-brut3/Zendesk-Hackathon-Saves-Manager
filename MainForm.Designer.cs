@@ -45,6 +45,7 @@
             this.deleteprofile.TabIndex = 14;
             this.deleteprofile.Text = "Delete Profile";
             this.deleteprofile.UseVisualStyleBackColor = true;
+            this.deleteprofile.Click += new System.EventHandler(this.Deleteprofile_Click);
             // 
             // deletegame
             // 
