@@ -27,7 +27,7 @@ namespace Zendesk_Hackathon_Saves_Manager
                 File.Create(Globals.DATABASE_LOCATION).Dispose();
 
             DatabaseManager.Connect();
-            LoadIntoForm();
+            PopulateGames();
         }
 
         private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
@@ -68,8 +68,10 @@ namespace Zendesk_Hackathon_Saves_Manager
             }
         }
 
-        private void LoadIntoForm()
+        private void PopulateGames()
         {
+            gameListView.Items.Clear();
+
             SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader("SELECT GameID,GameName FROM Games");
 
             while (sqlDataReader.Read())
@@ -84,6 +86,28 @@ namespace Zendesk_Hackathon_Saves_Manager
             sqlDataReader.Close();
         }
 
+        private void PopulateProfiles()
+        {
+            if (gameListView.SelectedItems.Count > 0)
+            {
+                profileListView.Items.Clear();
+
+                Game selectedGame = gameListView.SelectedItem as Game;
+                SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader(String.Format(
+                    @"SELECT ProfileID,ProfileName 
+                    FROM Profiles 
+                    WHERE Game = {0}",
+                    selectedGame.game_id));
+
+                while (sqlDataReader.Read())
+                {
+                    profileListView.Items.Add(sqlDataReader.GetValue(1).ToString());
+                }
+
+                sqlDataReader.Close();
+            }
+        }
+
         private void Addgame_Click(object sender, EventArgs e)
         {
             AddGameForm addGameForm = new AddGameForm();
@@ -95,6 +119,7 @@ namespace Zendesk_Hackathon_Saves_Manager
                 addGameForm.GetNameAndLocation.Item2);
 
             DatabaseManager.AddToDatabase(command);
+            PopulateGames();
         }
 
         public class Game
@@ -127,24 +152,7 @@ namespace Zendesk_Hackathon_Saves_Manager
 
         private void GameListView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (gameListView.SelectedItems.Count > 0)
-            {
-                profileListView.Items.Clear();
-
-                Game selectedGame = gameListView.SelectedItem as Game;
-                SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader(String.Format(
-                    @"SELECT ProfileID,ProfileName 
-                    FROM Profiles 
-                    WHERE Game = {0}",
-                    selectedGame.game_id));
-
-                while (sqlDataReader.Read())
-                {
-                    profileListView.Items.Add(sqlDataReader.GetValue(1).ToString());
-                }
-
-                sqlDataReader.Close();
-            }
+            PopulateProfiles();
         }
 
         private void Addprofile_Click(object sender, EventArgs e)
@@ -162,6 +170,7 @@ namespace Zendesk_Hackathon_Saves_Manager
                     selectedGame.game_id);
 
                 DatabaseManager.AddToDatabase(command);
+                PopulateProfiles();
                 //DirectoryCopy(newProfLoc, newProfLoc + "_" + newGameID + "." + newProfileID, true);
             }
         }
@@ -182,12 +191,21 @@ namespace Zendesk_Hackathon_Saves_Manager
             {
                 Game selectedGame = gameListView.SelectedItem as Game;
 
-                string command = String.Format(
+                string rmGameCommand = String.Format(
                     "DELETE Games WHERE GameID={0}",
                     selectedGame.game_id);
 
-                DatabaseManager.DeleteFromDatabase(command);
+                DatabaseManager.DeleteFromDatabase(rmGameCommand);
+
+                string rmProfilesCommand = String.Format(
+                "DELETE Profiles WHERE Game={0}",
+                selectedGame.game_id);
+
+                DatabaseManager.DeleteFromDatabase(rmProfilesCommand);
             }
+
+            PopulateGames();
+            profileListView.Items.Clear();
         }
     }
 }
