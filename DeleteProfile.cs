@@ -12,9 +12,28 @@ namespace Zendesk_Hackathon_Saves_Manager
 {
     public partial class DeleteProfile : Form
     {
+        private bool remove = false;
+
         public DeleteProfile()
         {
             InitializeComponent();
+        }
+
+        public bool CheckTheAnswer
+        {
+            get { return remove; }
+        }
+
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            remove = true;
+            this.Close();
+        }
+
+        private void Button2_Click(object sender, EventArgs e)
+        {
+            remove = false;
+            this.Close();
         }
     }
 }

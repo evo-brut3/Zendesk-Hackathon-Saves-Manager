@@ -207,22 +207,28 @@ namespace Zendesk_Hackathon_Saves_Manager
         {
             if (gameListView.SelectedItems.Count > 0)
             {
-                Game selectedGame = gameListView.SelectedItem as Game;
+                DeleteGameForm deleteGameForm = new DeleteGameForm();
+                deleteGameForm.ShowDialog();
 
-                string rmGameCommand = String.Format(
-                    "DELETE Games WHERE GameID={0}",
+                if (deleteGameForm.CheckTheAnswer == true)
+                {
+                    Game selectedGame = gameListView.SelectedItem as Game;
+
+                    string rmGameCommand = String.Format(
+                        "DELETE Games WHERE GameID={0}",
+                        selectedGame.game_id);
+
+                    DatabaseManager.DeleteFromDatabase(rmGameCommand);
+
+                    string rmProfilesCommand = String.Format(
+                    "DELETE Profiles WHERE Game={0}",
                     selectedGame.game_id);
 
-                DatabaseManager.DeleteFromDatabase(rmGameCommand);
+                    DatabaseManager.DeleteFromDatabase(rmProfilesCommand);
 
-                string rmProfilesCommand = String.Format(
-                "DELETE Profiles WHERE Game={0}",
-                selectedGame.game_id);
-
-                DatabaseManager.DeleteFromDatabase(rmProfilesCommand);
-
-                PopulateGames();
-                profileListView.Items.Clear();
+                    PopulateGames();
+                    profileListView.Items.Clear();
+                }
             }
         }
 
@@ -230,16 +236,22 @@ namespace Zendesk_Hackathon_Saves_Manager
         {
             if (profileListView.SelectedItems.Count > 0)
             {
-                Profile selectedProfile = profileListView.SelectedItem as Profile;
+                DeleteProfile deleteProfile = new DeleteProfile();
+                deleteProfile.ShowDialog();
 
-                string rmProfileCommand = String.Format(
-                "DELETE Profiles WHERE ProfileID={0}",
-                selectedProfile.profile_id);
+                if (deleteProfile.CheckTheAnswer == true)
+                {
+                    Profile selectedProfile = profileListView.SelectedItem as Profile;
 
-                DatabaseManager.DeleteFromDatabase(rmProfileCommand);
+                    string rmProfileCommand = String.Format(
+                    "DELETE Profiles WHERE ProfileID={0}",
+                    selectedProfile.profile_id);
 
-                profileListView.Items.Clear();
-                PopulateProfiles();
+                    DatabaseManager.DeleteFromDatabase(rmProfileCommand);
+
+                    profileListView.Items.Clear();
+                    PopulateProfiles();
+                }
             }
         }
     }
