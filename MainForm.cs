@@ -27,85 +27,41 @@ namespace Zendesk_Hackathon_Saves_Manager
                 File.Create(Globals.DATABASE_LOCATION).Dispose();
 
             DatabaseManager.Connect();
-            PopulateGames();
+            RefreshProfiles();
+            RefreshGames();
         }
 
-        private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        private void RefreshProfiles()
         {
-            // Get the subdirectories for the specified directory.
-            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+            List<Profile> profilesList = DataManager.GetProfiles();
+            profileListView.Items.Clear();
 
-            if (!dir.Exists)
+            if (gameListView.Items.Count > 0)
             {
-                throw new DirectoryNotFoundException(
-                    "Source directory does not exist or could not be found: "
-                    + sourceDirName);
+                Game selectedGame;
+                if (gameListView.SelectedItem != null)
+                    selectedGame = gameListView.SelectedItem as Game;
+                else
+                    selectedGame = gameListView.Items[0] as Game;
+
+                DataManager.PopulateProfiles(selectedGame.game_id);
             }
 
-            DirectoryInfo[] dirs = dir.GetDirectories();
-            // If the destination directory doesn't exist, create it.
-            if (!Directory.Exists(destDirName))
+            foreach (Profile p in profilesList)
             {
-                Directory.CreateDirectory(destDirName);
-            }
-
-            // Get the files in the directory and copy them to the new location.
-            FileInfo[] files = dir.GetFiles();
-            foreach (FileInfo file in files)
-            {
-                string temppath = Path.Combine(destDirName, file.Name);
-                file.CopyTo(temppath, false);
-            }
-
-            // If copying subdirectories, copy them and their contents to new location.
-            if (copySubDirs)
-            {
-                foreach (DirectoryInfo subdir in dirs)
-                {
-                    string temppath = Path.Combine(destDirName, subdir.Name);
-                    DirectoryCopy(subdir.FullName, temppath, copySubDirs);
-                }
+                profileListView.Items.Add(p);
             }
         }
 
-        private void PopulateGames()
+        private void RefreshGames()
         {
             gameListView.Items.Clear();
+            DataManager.PopulateGames();
+            List<Game> gamesList = DataManager.GetGames();
 
-            SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader("SELECT GameID,GameName FROM Games");
-
-            while (sqlDataReader.Read())
+            foreach (Game g in gamesList)
             {
-                int gid = sqlDataReader.GetInt32(0);
-                string gn = sqlDataReader.GetValue(1).ToString();
-                Game p = new Game(gid, gn);
-
-                gameListView.Items.Add(p);
-            }
-
-            sqlDataReader.Close();
-        }
-
-        private void PopulateProfiles()
-        {
-            if (gameListView.SelectedItems.Count > 0)
-            {
-                profileListView.Items.Clear();
-
-                Game selectedGame = gameListView.SelectedItem as Game;
-                SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader(String.Format(
-                    @"SELECT ProfileID,ProfileName 
-                    FROM Profiles 
-                    WHERE Game = {0}",
-                    selectedGame.game_id));
-
-                while (sqlDataReader.Read())
-                {
-                    Profile p = new Profile(sqlDataReader.GetInt32(0), sqlDataReader.GetValue(1).ToString());
-                    profileListView.Items.Add(p);
-                }
-
-                sqlDataReader.Close();
+                gameListView.Items.Add(g);
             }
         }
 
@@ -120,42 +76,10 @@ namespace Zendesk_Hackathon_Saves_Manager
                 addGameForm.GetNameAndLocation.Item2);
 
             DatabaseManager.AddToDatabase(command);
-            PopulateGames();
-        }
 
-        public class Game
-        {
-            public int game_id;
-            public string game_name;
-
-            public Game(int gid, string gn)
-            {
-                game_id = gid;
-                game_name = gn;
-            }
-
-            public override string ToString()
-            {
-                return this.game_name;
-
-            }
-        }
-
-        public class Profile
-        {
-            public int profile_id;
-            public string profile_name;
-
-            public Profile(int pid, string pn)
-            {
-                profile_id = pid;
-                profile_name = pn;
-            }
-
-            public override string ToString()
-            {
-                return this.profile_name;
-            }
+            AddNewProfile(DataManager.GetLastGameID());
+            RefreshGames();
+            RefreshProfiles();
         }
 
         static class Globals
@@ -170,7 +94,26 @@ namespace Zendesk_Hackathon_Saves_Manager
 
         private void GameListView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            PopulateProfiles();
+            RefreshProfiles();
+        }
+
+        private void AddNewProfile(int gameID)
+        {
+            AddProfileForm addProfileForm = new AddProfileForm();
+            addProfileForm.ShowDialog();
+
+            string command = String.Format(
+                "INSERT INTO Profiles (ProfileName, GameID) VALUES (\'{0}\', {1})",
+                addProfileForm.GetProfileName,
+                gameID);
+
+            DatabaseManager.AddToDatabase(command);
+
+            //string copyFrom = "";
+            //string copyTo =
+
+            //FSManager.DirectoryCopy(addProfileForm.GetProfileName, GetProfileName + "_" + newGameID + "." + newProfileID, true);
+            RefreshProfiles();
         }
 
         private void Addprofile_Click(object sender, EventArgs e)
@@ -178,18 +121,7 @@ namespace Zendesk_Hackathon_Saves_Manager
             if (gameListView.SelectedItems.Count > 0)
             {
                 Game selectedGame = gameListView.SelectedItem as Game;
-
-                AddProfileForm addProfileForm = new AddProfileForm();
-                addProfileForm.ShowDialog();
-
-                string command = String.Format(
-                    "INSERT INTO Profiles (ProfileName, Game) VALUES (\'{0}\', {1})", 
-                    addProfileForm.GetProfileName, 
-                    selectedGame.game_id);
-
-                DatabaseManager.AddToDatabase(command);
-                PopulateProfiles();
-                //DirectoryCopy(newProfLoc, newProfLoc + "_" + newGameID + "." + newProfileID, true);
+                AddNewProfile(selectedGame.game_id);
             }
         }
 
@@ -221,13 +153,12 @@ namespace Zendesk_Hackathon_Saves_Manager
                     DatabaseManager.DeleteFromDatabase(rmGameCommand);
 
                     string rmProfilesCommand = String.Format(
-                    "DELETE Profiles WHERE Game={0}",
+                    "DELETE Profiles WHERE GameID={0}",
                     selectedGame.game_id);
 
                     DatabaseManager.DeleteFromDatabase(rmProfilesCommand);
-
-                    PopulateGames();
-                    profileListView.Items.Clear();
+                    RefreshProfiles();
+                    RefreshGames();
                 }
             }
         }
@@ -248,9 +179,7 @@ namespace Zendesk_Hackathon_Saves_Manager
                     selectedProfile.profile_id);
 
                     DatabaseManager.DeleteFromDatabase(rmProfileCommand);
-
-                    profileListView.Items.Clear();
-                    PopulateProfiles();
+                    RefreshProfiles();
                 }
             }
         }
