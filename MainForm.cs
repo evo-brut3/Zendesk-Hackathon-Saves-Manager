@@ -87,7 +87,7 @@ namespace Zendesk_Hackathon_Saves_Manager
             DatabaseManager.AddToDatabase(command);
 
             RefreshGames();
-            AddNewProfile(DataManager.GetLastGameID(), true);
+            AddFirstProfile(DataManager.GetLastGameID());
             RefreshProfiles();
         }
 
@@ -103,6 +103,35 @@ namespace Zendesk_Hackathon_Saves_Manager
 
         private void GameListView_SelectedIndexChanged(object sender, EventArgs e)
         {
+            RefreshProfiles();
+        }
+
+        private void AddFirstProfile(int gameID)
+        {
+            AddProfileForm addProfileForm = new AddProfileForm();
+            addProfileForm.ShowDialog();
+
+            SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader(String.Format(
+                @"SELECT GameSaveLocation
+                FROM Games 
+                WHERE GameID={0}",
+                gameID));
+
+            string gameSaveLocation = "";
+            while (sqlDataReader.Read())
+            {
+                gameSaveLocation = sqlDataReader.GetValue(0).ToString().TrimEnd(' ');
+            }
+            sqlDataReader.Close();
+
+            string command = String.Format(
+                "INSERT INTO Profiles (ProfileName, GameID, ProfileSaveLocation, IsUsed) VALUES (\'{0}\', {1}, \'{2}\', {3})",
+                addProfileForm.GetProfileName,
+                gameID,
+                gameSaveLocation,
+                1);
+
+            DatabaseManager.AddToDatabase(command);
             RefreshProfiles();
         }
 
@@ -227,7 +256,7 @@ namespace Zendesk_Hackathon_Saves_Manager
                     profileID = sqlDataReader.GetInt32(1);
                 }
                 sqlDataReader.Close();
-
+                
                 FSManager.DirectoryRename(game.game_save_location, game.game_save_location + "_" + lastProfileName);
 
                 DatabaseManager.UpdateDatabase(String.Format(
