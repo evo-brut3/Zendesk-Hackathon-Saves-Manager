@@ -70,15 +70,24 @@ namespace Zendesk_Hackathon_Saves_Manager
             AddGameForm addGameForm = new AddGameForm();
             addGameForm.ShowDialog();
 
+            string gn = addGameForm.GetNameAndLocation.Item1;
+            string gsl = addGameForm.GetNameAndLocation.Item2;
+
+            //// ERROR HANDLING
+            /// if gsl is empty then throw
+
+            if (gsl.Last().ToString() == "\\")
+                gsl = gsl.Remove(gsl.Length - 1);
+
             string command = String.Format(
                 "INSERT INTO Games (GameName, GameSaveLocation) VALUES (\'{0}\', \'{1}\')",
-                addGameForm.GetNameAndLocation.Item1,
-                addGameForm.GetNameAndLocation.Item2);
+                gn,
+                gsl);
 
             DatabaseManager.AddToDatabase(command);
 
-            AddNewProfile(DataManager.GetLastGameID());
             RefreshGames();
+            AddNewProfile(DataManager.GetLastGameID(), true);
             RefreshProfiles();
         }
 
@@ -97,22 +106,36 @@ namespace Zendesk_Hackathon_Saves_Manager
             RefreshProfiles();
         }
 
-        private void AddNewProfile(int gameID)
+        private void AddNewProfile(int gameID, bool isUsed)
         {
             AddProfileForm addProfileForm = new AddProfileForm();
             addProfileForm.ShowDialog();
 
+            SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader(String.Format(
+                @"SELECT GameSaveLocation
+                FROM Games 
+                WHERE GameID={0}",
+                gameID));
+
+            string gameSaveLocation = "";
+            while (sqlDataReader.Read())
+            {
+              gameSaveLocation = sqlDataReader.GetValue(0).ToString().TrimEnd(' ');
+            }
+            string profileSaveLocation = gameSaveLocation + "_" + addProfileForm.GetProfileName;
+
+            sqlDataReader.Close();
+
             string command = String.Format(
-                "INSERT INTO Profiles (ProfileName, GameID) VALUES (\'{0}\', {1})",
+                "INSERT INTO Profiles (ProfileName, GameID, ProfileSaveLocation, IsUsed) VALUES (\'{0}\', {1}, \'{2}\', {3})",
                 addProfileForm.GetProfileName,
-                gameID);
+                gameID,
+                profileSaveLocation,
+                (isUsed ? 1 : 0));
 
             DatabaseManager.AddToDatabase(command);
 
-            //string copyFrom = "";
-            //string copyTo =
-
-            //FSManager.DirectoryCopy(addProfileForm.GetProfileName, GetProfileName + "_" + newGameID + "." + newProfileID, true);
+            FSManager.DirectoryCopy(gameSaveLocation, profileSaveLocation, true);
             RefreshProfiles();
         }
 
@@ -121,7 +144,7 @@ namespace Zendesk_Hackathon_Saves_Manager
             if (gameListView.SelectedItems.Count > 0)
             {
                 Game selectedGame = gameListView.SelectedItem as Game;
-                AddNewProfile(selectedGame.game_id);
+                AddNewProfile(selectedGame.game_id, false);
             }
         }
 
@@ -182,6 +205,53 @@ namespace Zendesk_Hackathon_Saves_Manager
                     RefreshProfiles();
                 }
             }
+        }
+
+        private void ProfileListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Profile profile = profileListView.SelectedItem as Profile;
+            Game game = gameListView.SelectedItem as Game;
+
+            SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader(String.Format(
+                @"SELECT ProfileName,ProfileID
+                FROM Profiles
+                WHERE IsUsed=1"));
+
+            string lastProfileName = "";
+            int profileID = 0;
+            while (sqlDataReader.Read())
+            {
+                lastProfileName = sqlDataReader.GetString(0).TrimEnd(' ');
+                profileID = sqlDataReader.GetInt32(1);
+            }
+            sqlDataReader.Close();
+
+            FSManager.DirectoryRename(game.game_save_location, game.game_save_location + "_" + lastProfileName);
+
+            DatabaseManager.UpdateDatabase(String.Format(
+                "UPDATE Profiles SET ProfileSaveLocation=\'{0}\' WHERE ProfileID={1}",
+                game.game_save_location + "_" + lastProfileName,
+                profileID));
+
+            DatabaseManager.UpdateDatabase(String.Format(
+            @"UPDATE Profiles 
+                SET IsUsed=0
+                WHERE ProfileID={0}",
+                profileID));
+
+            RefreshProfiles();
+            FSManager.DirectoryRename(profile.profile_save_location, game.game_save_location);
+
+            DatabaseManager.UpdateDatabase(String.Format(
+                "UPDATE Profiles SET ProfileSaveLocation=\'{0}\' WHERE ProfileID={1}",
+                game.game_save_location,
+                game.game_id));
+
+            DatabaseManager.UpdateDatabase(String.Format(
+                @"UPDATE Profiles 
+                SET IsUsed=1
+                WHERE ProfileID={0}",
+                profile.profile_id));
         }
     }
 }

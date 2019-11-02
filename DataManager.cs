@@ -33,12 +33,16 @@ namespace Zendesk_Hackathon_Saves_Manager
         public int profile_id;
         public string profile_name;
         public int game_id;
+        public string profile_save_location;
+        bool is_used;
 
-        public Profile(int pid, string pn, int gid)
+        public Profile(int pid, string pn, int gid, string psl, bool iu)
         {
             profile_id = pid;
             profile_name = pn;
             game_id = gid;
+            profile_save_location = psl;
+            is_used = iu;
         }
 
         public override string ToString()
@@ -61,8 +65,9 @@ namespace Zendesk_Hackathon_Saves_Manager
             while (sqlDataReader.Read())
             {
                 int gid = sqlDataReader.GetInt32(0);
-                string gn = sqlDataReader.GetValue(1).ToString();
-                string gsl = sqlDataReader.GetValue(2).ToString();
+                string gn = sqlDataReader.GetString(1).TrimEnd(' ');
+                string gsl = sqlDataReader.GetString(2).TrimEnd(' ');
+
                 Game g = new Game(gid, gn, gsl);
 
                 gamesList.Add(g);
@@ -76,7 +81,7 @@ namespace Zendesk_Hackathon_Saves_Manager
             profileList.Clear();
 
             SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader(String.Format(
-                @"SELECT ProfileID,ProfileName 
+                @"SELECT ProfileID,ProfileName,ProfileSaveLocation,IsUsed
                 FROM Profiles 
                 WHERE GameID={0}",
                 gameID));
@@ -84,9 +89,11 @@ namespace Zendesk_Hackathon_Saves_Manager
             while (sqlDataReader.Read())
             {
                 int pid = sqlDataReader.GetInt32(0);
-                string pn = sqlDataReader.GetValue(1).ToString();
+                string pn = sqlDataReader.GetString(1).TrimEnd(' ');
                 int gid = gameID;
-                Profile p = new Profile(pid, pn, gid);
+                string psl = sqlDataReader.GetString(2).TrimEnd(' ');
+                bool iu = sqlDataReader.GetBoolean(3);
+                Profile p = new Profile(pid, pn, gid, psl, iu);
             
                 profileList.Add(p);
             }
@@ -106,12 +113,18 @@ namespace Zendesk_Hackathon_Saves_Manager
 
         public static int GetLastProfileID()
         {
-            return profileList[profileList.Count - 1].profile_id;
+            if (profileList.Count > 0)
+                return profileList[profileList.Count - 1].profile_id;
+            else
+                return 1;
         }
 
         public static int GetLastGameID()
         {
-            return gamesList[gamesList.Count - 1].game_id;
+            if (gamesList.Count > 0)
+                return gamesList[gamesList.Count - 1].game_id;
+            else
+                return 1;
         }
     }
 }

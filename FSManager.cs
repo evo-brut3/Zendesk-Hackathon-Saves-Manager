@@ -5,11 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
+using System.Windows.Forms;
+
 namespace Zendesk_Hackathon_Saves_Manager
 {
     static class FSManager
     {
-        private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        public static void DirectoryRename(string oldDirName, string newDirName)
+        {
+            Directory.Move(oldDirName, newDirName);
+        }
+
+        public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
         {
             DirectoryInfo dir = new DirectoryInfo(sourceDirName);
 

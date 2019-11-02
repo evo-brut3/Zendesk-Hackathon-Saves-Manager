@@ -98,6 +98,7 @@
             this.profileListView.Name = "profileListView";
             this.profileListView.Size = new System.Drawing.Size(332, 452);
             this.profileListView.TabIndex = 18;
+            this.profileListView.SelectedIndexChanged += new System.EventHandler(this.ProfileListView_SelectedIndexChanged);
             // 
             // MainForm
             // 
