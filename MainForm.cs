@@ -209,49 +209,53 @@ namespace Zendesk_Hackathon_Saves_Manager
 
         private void ProfileListView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Profile profile = profileListView.SelectedItem as Profile;
-            Game game = gameListView.SelectedItem as Game;
-
-            SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader(String.Format(
-                @"SELECT ProfileName,ProfileID
-                FROM Profiles
-                WHERE IsUsed=1"));
-
-            string lastProfileName = "";
-            int profileID = 0;
-            while (sqlDataReader.Read())
+            int selectedProfileID = profileListView.SelectedIndex;
+            if (selectedProfileID != -1)
             {
-                lastProfileName = sqlDataReader.GetString(0).TrimEnd(' ');
-                profileID = sqlDataReader.GetInt32(1);
-            }
-            sqlDataReader.Close();
+                Game game = gameListView.SelectedItem as Game;
 
-            FSManager.DirectoryRename(game.game_save_location, game.game_save_location + "_" + lastProfileName);
+                SqlDataReader sqlDataReader = DatabaseManager.ExecuteDataReader(String.Format(
+                    @"SELECT ProfileName,ProfileID
+                    FROM Profiles
+                    WHERE IsUsed=1"));
 
-            DatabaseManager.UpdateDatabase(String.Format(
-                "UPDATE Profiles SET ProfileSaveLocation=\'{0}\' WHERE ProfileID={1}",
-                game.game_save_location + "_" + lastProfileName,
-                profileID));
+                string lastProfileName = "";
+                int profileID = 0;
+                while (sqlDataReader.Read())
+                {
+                    lastProfileName = sqlDataReader.GetString(0).TrimEnd(' ');
+                    profileID = sqlDataReader.GetInt32(1);
+                }
+                sqlDataReader.Close();
 
-            DatabaseManager.UpdateDatabase(String.Format(
-            @"UPDATE Profiles 
-                SET IsUsed=0
-                WHERE ProfileID={0}",
-                profileID));
+                FSManager.DirectoryRename(game.game_save_location, game.game_save_location + "_" + lastProfileName);
 
-            RefreshProfiles();
-            FSManager.DirectoryRename(profile.profile_save_location, game.game_save_location);
+                DatabaseManager.UpdateDatabase(String.Format(
+                    "UPDATE Profiles SET ProfileSaveLocation=\'{0}\' WHERE ProfileID={1}",
+                    game.game_save_location + "_" + lastProfileName,
+                    profileID));
 
-            DatabaseManager.UpdateDatabase(String.Format(
-                "UPDATE Profiles SET ProfileSaveLocation=\'{0}\' WHERE ProfileID={1}",
-                game.game_save_location,
-                game.game_id));
-
-            DatabaseManager.UpdateDatabase(String.Format(
+                DatabaseManager.UpdateDatabase(String.Format(
                 @"UPDATE Profiles 
-                SET IsUsed=1
-                WHERE ProfileID={0}",
-                profile.profile_id));
+                    SET IsUsed=0
+                    WHERE ProfileID={0}",
+                    profileID));
+
+                RefreshProfiles();
+                Profile profile = profileListView.Items[selectedProfileID] as Profile;
+                FSManager.DirectoryRename(profile.profile_save_location, game.game_save_location);
+
+                DatabaseManager.UpdateDatabase(String.Format(
+                    "UPDATE Profiles SET ProfileSaveLocation=\'{0}\' WHERE ProfileID={1}",
+                    game.game_save_location,
+                    game.game_id));
+
+                DatabaseManager.UpdateDatabase(String.Format(
+                    @"UPDATE Profiles 
+                    SET IsUsed=1
+                    WHERE ProfileID={0}",
+                    profile.profile_id));
+            }
         }
     }
 }
